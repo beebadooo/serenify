@@ -4,12 +4,20 @@ import { useEffect, useState } from "react"
 import { AppLayout } from "@/components/app-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+<<<<<<< HEAD
 import { Check, Plus, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+=======
+import { Check, Plus, Bot, Loader2 } from "lucide-react"
+import { useSupabaseClient } from "@/supabase/use-supabase"
+>>>>>>> 5b23553ab3b704fcab925792d0dad006029db3e4
 
 export default function TrackerPage() {
+  const supabase = useSupabaseClient()
+
   const [selectedMood, setSelectedMood] = useState<number | null>(null)
+<<<<<<< HEAD
   const [energyLevel, setEnergyLevel] = useState<number | null>(null)
   const [sleepHours, setSleepHours] = useState<number>(8)
   const [notes, setNotes] = useState("")
@@ -40,6 +48,64 @@ export default function TrackerPage() {
       setRecentCheckins(data)
     } catch (err: any) {
       console.error('Error fetching recent check-ins:', err.message)
+=======
+  const [energy, setEnergy] = useState<string>("")
+  const [sleep, setSleep] = useState<number>(7)
+  const [notes, setNotes] = useState("")
+  const [saved, setSaved] = useState(false)
+  const [aiInsight, setAiInsight] = useState<string>("")
+  const [loadingAI, setLoadingAI] = useState(false)
+
+  // 🔹 Save check-in data to Supabase
+  const handleSave = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      alert("Please log in to save your check-in.")
+      return
+    }
+
+    const { error } = await supabase.from("mood_checkins").insert([
+      {
+        user_id: user.id,
+        date: new Date().toISOString().split("T")[0],
+        mood: selectedMood,
+        energy,
+        sleep,
+        notes,
+      },
+    ])
+
+    if (error) {
+      console.error("Error saving check-in:", error)
+      alert("Error saving your check-in. Please try again.")
+    } else {
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+      setSelectedMood(null)
+      setNotes("")
+      setEnergy("")
+      setSleep(7)
+    }
+  }
+
+  // 🔹 Fetch AI insights from backend
+  const handleAIAnalyze = async () => {
+    setLoadingAI(true)
+    setAiInsight("")
+
+    try {
+      const res = await fetch("/api/ai-insight", { method: "POST" })
+      const data = await res.json()
+      setAiInsight(data.suggestion)
+    } catch (err) {
+      console.error("AI error:", err)
+      setAiInsight("⚠️ Could not generate insights. Try again later.")
+    } finally {
+      setLoadingAI(false)
+>>>>>>> 5b23553ab3b704fcab925792d0dad006029db3e4
     }
   }
 
@@ -163,11 +229,19 @@ export default function TrackerPage() {
                 ].map(({ level, label }) => (
                   <button
                     key={level}
+<<<<<<< HEAD
                     onClick={() => setEnergyLevel(level)}
                     className={`px-4 py-2 rounded-lg transition-colors ${
                       energyLevel === level
                         ? "bg-accent text-accent-foreground"
                         : "bg-muted hover:bg-accent hover:text-accent-foreground text-foreground"
+=======
+                    onClick={() => setEnergy(level)}
+                    className={`px-4 py-2 rounded-lg transition-all ${
+                      energy === level
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-muted hover:bg-muted/80 text-foreground"
+>>>>>>> 5b23553ab3b704fcab925792d0dad006029db3e4
                     }`}
                   >
                     {label}
@@ -178,17 +252,29 @@ export default function TrackerPage() {
 
             {/* Sleep Hours */}
             <div className="space-y-3">
+<<<<<<< HEAD
               <label className="text-sm font-medium text-foreground">Last Night's Sleep:</label>
+=======
+              <label className="text-sm font-medium text-foreground">Last Night's Sleep: {sleep} hrs</label>
+>>>>>>> 5b23553ab3b704fcab925792d0dad006029db3e4
               <input
                 type="range"
                 min="0"
                 max="12"
+<<<<<<< HEAD
                 step="0.5"
                 value={sleepHours}
                 onChange={(e) => setSleepHours(parseFloat(e.target.value))}
                 className="w-full"
               />
               <p className="text-xs text-foreground/60">{sleepHours} hours of sleep</p>
+=======
+                value={sleep}
+                onChange={(e) => setSleep(Number(e.target.value))}
+                className="w-full"
+              />
+              <p className="text-xs text-foreground/60">Rate your sleep quality (0-12 hours)</p>
+>>>>>>> 5b23553ab3b704fcab925792d0dad006029db3e4
             </div>
 
             {/* Notes */}
@@ -238,21 +324,25 @@ export default function TrackerPage() {
               (note, index) => (
                 <button
                   key={index}
+                  onClick={() => setNotes(note)}
                   className="w-full p-3 text-left bg-muted hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors text-foreground flex items-center justify-between"
                 >
                   <span>{note}</span>
                   <Plus className="w-4 h-4" />
                 </button>
-              ),
+              )
             )}
           </CardContent>
         </Card>
 
-        {/* Recent Check-ins */}
+        {/* AI Wellness Insights */}
         <Card className="bg-card/50 border-border/50">
           <CardHeader>
-            <CardTitle className="text-lg">Recent Check-ins</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Bot className="w-5 h-5 text-accent" /> Weekly AI Insights
+            </CardTitle>
           </CardHeader>
+<<<<<<< HEAD
           <CardContent className="space-y-3">
             {recentCheckins.map((checkin) => {
               const date = new Date(checkin.created_at)
@@ -292,6 +382,30 @@ export default function TrackerPage() {
             })}
             {recentCheckins.length === 0 && (
               <p className="text-sm text-foreground/60 text-center py-4">No recent check-ins</p>
+=======
+          <CardContent className="space-y-4">
+            <p className="text-sm text-foreground/70">
+              Get personalized suggestions based on your mood, sleep, and energy logs.
+            </p>
+            <Button
+              onClick={handleAIAnalyze}
+              disabled={loadingAI}
+              className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+            >
+              {loadingAI ? (
+                <>
+                  <Loader2 className="animate-spin w-4 h-4 mr-2" /> Analyzing your week...
+                </>
+              ) : (
+                "Generate Wellness Insights"
+              )}
+            </Button>
+
+            {aiInsight && (
+              <div className="p-4 bg-muted rounded-lg text-foreground text-sm whitespace-pre-wrap">
+                {aiInsight}
+              </div>
+>>>>>>> 5b23553ab3b704fcab925792d0dad006029db3e4
             )}
           </CardContent>
         </Card>
