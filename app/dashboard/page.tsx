@@ -106,7 +106,7 @@ export default function DashboardPage() {
       const { data: completions, error: completionsError } = await supabase
         .from('habit_completions')
         .select('habit_id, completed_date')
-        .eq('user_id', user?.id)
+        .eq('user_id', currentUser.id)
         .gte('completed_date', startOfWeek.toISOString().split('T')[0])
 
       if (completionsError) throw completionsError
