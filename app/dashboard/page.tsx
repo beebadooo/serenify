@@ -287,7 +287,7 @@ export default function DashboardPage() {
                 <div>
                   <p className="text-foreground/70 text-sm font-medium">Weekly Avg Mood</p>
                   <p className="text-3xl font-bold text-accent mt-2">{weeklyStats.avgMood}</p>
-                  <p className="text-xs text-foreground/60 mt-1">out of 5</p>
+                  <p className="text-xs text-foreground/60 mt-1">out of 10</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-accent/50" />
               </div>

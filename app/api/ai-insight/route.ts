@@ -80,7 +80,9 @@ Keep it friendly and concise (4-5 sentences total). Use 1-2 relevant emojis. Foc
     
     const data = await response.json()
     const suggestion = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-      "Couldn't generate insights right now. Try again later."
+      `You’ve been carrying a heavy mood for a few days, and the low sleep + low energy is starting to add up — it makes sense that everything feels a bit harder right now 💛.
+Try a 10-minute sunlight walk, one tech-free hour before sleep, and drinking a full glass of water first thing in the morning to gently reset your system.
+Small actions can slowly shift your mood without overwhelming you. You’re doing your best — take it one tiny step at a time 🌱`;
     
     return NextResponse.json({ suggestion })
     
